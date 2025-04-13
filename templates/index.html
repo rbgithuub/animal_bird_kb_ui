@@ -65,17 +65,34 @@
 
     <form id="animalForm" onsubmit="addAnimal(event)">
         <div class="row mb-3">
-            <div class="col"><input class="form-control" placeholder="Name" id="name" required></div>
-            <div class="col"><input class="form-control" placeholder="Category (Animal/Bird)" id="category" required></div>
-            <div class="col"><input class="form-control" placeholder="Origin" id="origin" required></div>
+          <div class="col">
+            <input class="form-control" placeholder="Name" id="name" required>
+          </div>
+          <div class="col">
+            <select class="form-control" id="category" required>
+              <option value="" disabled selected>Select Category</option>
+              <option value="Animal">Animal</option>
+              <option value="Bird">Bird</option>
+            </select>
+          </div>
+          <div class="col">
+            <input class="form-control" placeholder="Origin" id="origin" required>
+          </div>
         </div>
         <div class="row mb-3">
-            <div class="col"><input class="form-control" placeholder="Sleep Pattern" id="sleep_pattern" required></div>
-            <div class="col"><input class="form-control" placeholder="Food Habits" id="food_habits" required></div>
-            <div class="col"><input class="form-control" placeholder="Fun Facts (separate by semicolon)" id="fun_facts" required></div>
+          <div class="col">
+            <input class="form-control" placeholder="Sleep Pattern" id="sleep_pattern" required>
+          </div>
+          <div class="col">
+            <input class="form-control" placeholder="Food Habits" id="food_habits" required>
+          </div>
+          <div class="col">
+            <input class="form-control" placeholder="Fun Facts (separate by semicolon)" id="fun_facts" required>
+          </div>
         </div>
         <button class="btn btn-primary" type="submit">Add Animal</button>
-    </form>
+      </form>
+      
 
     <hr>
 
