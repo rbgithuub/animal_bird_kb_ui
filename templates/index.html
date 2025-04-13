@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Animal Knowledge Base</title>
+</head>
+<body>
+    <h1>Animals and Birds</h1>
+    <table border="1" id="animalTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Origin</th>
+                <th>Sleep Pattern</th>
+                <th>Food Habits</th>
+                <th>Fun Fact 1</th>
+                <th>Fun Fact 2</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        async function loadAnimals() {
+            try {
+                const response = await fetch('/animals');
+                const data = await response.json();
+
+                const tbody = document.querySelector('#animalTable tbody');
+                tbody.innerHTML = '';
+
+                data.forEach(animal => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${animal.name}</td>
+                        <td>${animal.category}</td>
+                        <td>${animal.origin}</td>
+                        <td>${animal.sleep_pattern}</td>
+                        <td>${animal.food_habits}</td>
+                        <td>${animal.fun_facts[0] || ''}</td>
+                        <td>${animal.fun_facts[1] || ''}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading animals:', error);
+            }
+        }
+
+        // Load data when page loads
+        window.onload = loadAnimals;
+    </script>
+</body>
+</html>
