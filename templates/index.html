@@ -2,53 +2,97 @@
 <html>
 <head>
     <title>Animal Knowledge Base</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script>
+        async function loadAnimals() {
+            const response = await fetch('/animals');
+            const animals = await response.json();
+
+            const tableBody = document.getElementById('animalTable');
+            tableBody.innerHTML = '';
+
+            animals.forEach(animal => {
+                const row = `<tr>
+                    <td>${animal.name}</td>
+                    <td>${animal.category}</td>
+                    <td>${animal.origin}</td>
+                    <td>${animal.sleep_pattern}</td>
+                    <td>${animal.food_habits}</td>
+                    <td>${animal.fun_facts.join('<br>')}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editAnimal('${animal._id}')">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteAnimal('${animal._id}')">Delete</button>
+                    </td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        async function addAnimal(event) {
+            event.preventDefault();
+            const data = {
+                name: document.getElementById('name').value,
+                category: document.getElementById('category').value,
+                origin: document.getElementById('origin').value,
+                sleep_pattern: document.getElementById('sleep_pattern').value,
+                food_habits: document.getElementById('food_habits').value,
+                fun_facts: document.getElementById('fun_facts').value.split(';')
+            };
+            await fetch('/animals', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            document.getElementById('animalForm').reset();
+            loadAnimals();
+        }
+
+        async function deleteAnimal(id) {
+            await fetch(`/animals/${id}`, { method: 'DELETE' });
+            loadAnimals();
+        }
+
+        function editAnimal(id) {
+            // Optional: implement edit functionality (like opening a modal to edit)
+            alert("Editing feature can be added here.");
+        }
+
+        window.onload = loadAnimals;
+    </script>
 </head>
-<body>
-    <h1>Animals and Birds</h1>
-    <table border="1" id="animalTable">
-        <thead>
+<body class="container mt-4">
+    <h1 class="mb-4">Animal Knowledge Base</h1>
+
+    <form id="animalForm" onsubmit="addAnimal(event)">
+        <div class="row mb-3">
+            <div class="col"><input class="form-control" placeholder="Name" id="name" required></div>
+            <div class="col"><input class="form-control" placeholder="Category (Animal/Bird)" id="category" required></div>
+            <div class="col"><input class="form-control" placeholder="Origin" id="origin" required></div>
+        </div>
+        <div class="row mb-3">
+            <div class="col"><input class="form-control" placeholder="Sleep Pattern" id="sleep_pattern" required></div>
+            <div class="col"><input class="form-control" placeholder="Food Habits" id="food_habits" required></div>
+            <div class="col"><input class="form-control" placeholder="Fun Facts (separate by semicolon)" id="fun_facts" required></div>
+        </div>
+        <button class="btn btn-primary" type="submit">Add Animal</button>
+    </form>
+
+    <hr>
+
+    <h3>Animal List</h3>
+    <table class="table table-bordered table-striped mt-3">
+        <thead class="table-dark">
             <tr>
                 <th>Name</th>
                 <th>Category</th>
                 <th>Origin</th>
                 <th>Sleep Pattern</th>
                 <th>Food Habits</th>
-                <th>Fun Fact 1</th>
-                <th>Fun Fact 2</th>
+                <th>Fun Facts</th>
+                <th>Actions</th>
             </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="animalTable"></tbody>
     </table>
-
-    <script>
-        async function loadAnimals() {
-            try {
-                const response = await fetch('/animals');
-                const data = await response.json();
-
-                const tbody = document.querySelector('#animalTable tbody');
-                tbody.innerHTML = '';
-
-                data.forEach(animal => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${animal.name}</td>
-                        <td>${animal.category}</td>
-                        <td>${animal.origin}</td>
-                        <td>${animal.sleep_pattern}</td>
-                        <td>${animal.food_habits}</td>
-                        <td>${animal.fun_facts[0] || ''}</td>
-                        <td>${animal.fun_facts[1] || ''}</td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            } catch (error) {
-                console.error('Error loading animals:', error);
-            }
-        }
-
-        // Load data when page loads
-        window.onload = loadAnimals;
-    </script>
 </body>
 </html>
