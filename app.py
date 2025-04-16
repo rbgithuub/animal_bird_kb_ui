@@ -41,7 +41,9 @@ def get_animals():
 @app.route('/animals', methods=['POST'])
 @swag_from({
     'tags': ['Animals'],
-    'parameters': [{
+    'consumes': ['application/json'],
+    'parameters': [
+        {
         'name': 'body',
         'in': 'body',
         'required': True,
@@ -60,17 +62,24 @@ def get_animals():
                         '2': {'type': 'string'}
                     }
                 }
-            }
+            },
+            'required': ['name', 'category', 'origin', 'sleep_pattern', 'food_habits', 'fun_facts']
         }
-    }],
+    }
+],
     'responses': {
-        200: {'description': 'Animal added successfully'}
+        200: {'description': 'Animal added successfully'},
+        400: {'description': 'Bad request'}
     }
 })
 def add_animal():
     data = request.json
-    result = collection.insert_one(data)
-    return jsonify({'inserted_id': str(result.inserted_id)})
+    if data:
+        result = collection.insert_one(data)
+        return jsonify({"message": "Animal added successfully"}), 200
+        """return jsonify({'inserted_id': str(result.inserted_id)})"""
+    else:
+        return jsonify({"error": "Invalid or missing JSON"}), 400
 
 @app.route('/animals/<id>', methods=['PUT'])
 @swag_from({
