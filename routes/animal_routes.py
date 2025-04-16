@@ -47,11 +47,31 @@ def get_animal(id):
     animal = animals.find_one({"_id": ObjectId(id)})
     return jsonify(animal_serializer(animal))
 
-@animal_api.route("/animals/<id>", methods=["PUT"])
+"""@animal_api.route("/animals/<id>", methods=["PUT"])
 def update_animal(id):
     data = request.json
     animals.update_one({"_id": ObjectId(id)}, {"$set": data})
-    return jsonify({"msg": "Updated"})
+    return jsonify({"msg": "Updated"})"""
+
+@animal_api.route('/animals/<id>', methods=['PUT'])
+def update_animal(id):
+    print("Received PUT request for ID:", id)
+    print("Request JSON:", request.json)
+    data = request.json
+    updated_data = {
+        "name": data['name'],
+        "category": data['category'],
+        "origin": data['origin'],
+        "sleep_pattern": data['sleep_pattern'],
+        "food_habits": data['food_habits'],
+        "fun_facts": data['fun_facts']
+    }
+    if data:
+        result = collection.update_one({"_id": ObjectId(id)}, {"$set": updated_data})
+        return jsonify({'message': 'Animal updated'}), 200
+    else:
+        return jsonify({"error":"No data provided"}), 400
+
 
 @animal_api.route("/animals/<id>", methods=["DELETE"])
 def delete_animal(id):
