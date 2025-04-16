@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from pymongo import MongoClient
 from bson import ObjectId
+from bson.errors import InvalidId
 from flasgger import Swagger, swag_from
 
 app = Flask(__name__)
@@ -81,20 +82,31 @@ def add_animal():
     else:
         return jsonify({"error": "Invalid or missing JSON"}), 400
 
-@app.route('/animals/<id>', methods=['PUT'])
+@app.route('/animals/<string:id>', methods=['PUT'])
 @swag_from({
     'tags': ['Animals'],
+    'consumes': ['application/json'],
     'parameters': [
-        {'name': 'id', 'in': 'path', 'type': 'string', 'required': True},
-        {'name': 'body', 'in': 'body', 'required': True, 'schema': {
-            'type': 'object',
-            'properties': {
-                'name': {'type': 'string'},
-                'category': {'type': 'string'},
-                'origin': {'type': 'string'},
-                'sleep_pattern': {'type': 'string'},
-                'food_habits': {'type': 'string'},
-                'fun_facts': {
+        {
+            'name': 'id',
+            'in': 'path',
+            'type': 'string',
+            'required': True,
+            'description': 'ID of the animal to update'
+         },
+        {
+            'name': 'body',
+            'in': 'body',
+            'required': True, 
+            'schema': {
+               'type': 'object',
+               'properties': {
+                   'name': {'type': 'string'},
+                   'category': {'type': 'string'},
+                   'origin': {'type': 'string'},
+                   'sleep_pattern': {'type': 'string'},
+                   'food_habits': {'type': 'string'},
+                   'fun_facts': {
                     'type': 'object',
                     'properties': {
                         '1': {'type': 'string'},
@@ -102,15 +114,32 @@ def add_animal():
                     }
                 }
             }
-        }}
-    ],
-    'responses': {200: {'description': 'Animal updated successfully'}}
-})
+        }
+     }
+   ],
+    'responses': {
+        200: {'description': 'Animal updated successfully'},
+        400: {'description': 'Bad request'},
+        404: {'description': 'Animal not found'}
+        }
+}
+)
 
 def update_animal(id):
     data = request.json
-    collection.update_one({'_id': ObjectId(id)}, {'$set': data})
-    return jsonify({'message': 'Animal updated'})
+    print("PUT request received:", data)
+    
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
+    
+    try:
+        result = collection.update_one({'_id': ObjectId(id)}, {'$set': data})
+        if result.matched_count == 0:
+              return jsonify({'error': 'No animal found with this ID'}), 404
+        return jsonify({'message': 'Animal updated successfully'}), 200
+    except Exception as e:
+        print("Update error:", str(e))
+        return jsonify({'error': 'Server error'}), 500
 
 @app.route('/animals/<id>', methods=['DELETE'])
 @swag_from({
