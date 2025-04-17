@@ -33,16 +33,18 @@ async function loadAnimals() {
   tableBody.innerHTML = ''; // Clear old rows
 
   animals.forEach(animal => {
+    // Convert fun_facts object to array of values
+      const factsArray = Object.values(animal.fun_facts);
       const row = `<tr>
           <td>${animal.name}</td>
           <td>${animal.category}</td>
           <td>${animal.origin}</td>
           <td>${animal.sleep_pattern}</td>
           <td>${animal.food_habits}</td>
-          <td>${animal.fun_facts.join(', ')}</td>
+          <td>${factsArray.join('<br>')}</td>
           <td>
-              <button class="btn btn-sm btn-warning" onclick="editAnimal('${animal._id}')">Edit</button>
-              <button class="btn btn-sm btn-danger" onclick="deleteAnimal('${animal._id}')">Delete</button>
+          <button class="btn btn-warning btn-sm" onclick="editAnimal('${animal._id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteAnimal('${animal._id}')">Delete</button>
           </td>
       </tr>`;
       tableBody.innerHTML += row;
@@ -93,14 +95,29 @@ async function submitEdit(event) {
 
   const id = document.getElementById('edit_id').value;
 
+  // Convert input facts into numbered object format
+  const funFactsArray = document.getElementById('edit_fun_facts').value.split(';').map(f => f.trim());
+  const funFactsObject = {};
+  funFactsArray.forEach((fact, index) => {
+      funFactsObject[(index + 1).toString()] = fact;
+  });
+
+  //const data = {
+  //    name: document.getElementById('edit_name').value,
+  //    category: document.getElementById('edit_category').value,
+  //    origin: document.getElementById('edit_origin').value,
+  //    sleep_pattern: document.getElementById('edit_sleep_pattern').value,
+  //    food_habits: document.getElementById('edit_food_habits').value,
+  //    fun_facts: document.getElementById('edit_fun_facts').value.split(';').map(f => f.trim())
+  //};
   const data = {
-      name: document.getElementById('edit_name').value,
-      category: document.getElementById('edit_category').value,
-      origin: document.getElementById('edit_origin').value,
-      sleep_pattern: document.getElementById('edit_sleep_pattern').value,
-      food_habits: document.getElementById('edit_food_habits').value,
-      fun_facts: document.getElementById('edit_fun_facts').value.split(';').map(f => f.trim())
-  };
+    name: document.getElementById('edit_name').value,
+    category: document.getElementById('edit_category').value,
+    origin: document.getElementById('edit_origin').value,
+    sleep_pattern: document.getElementById('edit_sleep_pattern').value,
+    food_habits: document.getElementById('edit_food_habits').value,
+    fun_facts: funFactsObject
+};
 
   const response = await fetch(`/animals/${id}`, {
       method: 'PUT',

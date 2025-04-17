@@ -12,16 +12,18 @@
             tableBody.innerHTML = '';
 
             animals.forEach(animal => {
+              // Convert fun_facts object to array of values
+                const factsArray = Object.values(animal.fun_facts);
                 const row = `<tr>
                     <td>${animal.name}</td>
                     <td>${animal.category}</td>
                     <td>${animal.origin}</td>
                     <td>${animal.sleep_pattern}</td>
                     <td>${animal.food_habits}</td>
-                    <td>${animal.fun_facts.join('<br>')}</td>
+                    <td>${factsArray.join('<br>')}</td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="editAnimal('${animal._id}')">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteAnimal('${animal._id}')">Delete</button>
+                    <button class="btn btn-warning btn-sm" onclick="editAnimal('${animal._id}')">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteAnimal('${animal._id}')">Delete</button>
                     </td>
                 </tr>`;
                 tableBody.innerHTML += row;
@@ -96,7 +98,7 @@
     modal.hide();
 
     // Refresh table
-    //loadAnimals();
+    loadAnimals();
 }
 }
     </script>
