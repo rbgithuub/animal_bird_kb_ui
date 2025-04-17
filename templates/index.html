@@ -80,8 +80,14 @@
     document.getElementById('edit_origin').value = animal.origin;
     document.getElementById('edit_sleep_pattern').value = animal.sleep_pattern;
     document.getElementById('edit_food_habits').value = animal.food_habits;
-    document.getElementById('edit_fun_facts').value = Object.values(animal.fun_facts).join('; ');
+    //document.getElementById('edit_fun_facts').value = Object.values(animal.fun_facts).join('; ');
     //document.getElementById('edit_fun_facts').value = animal.fun_facts.join(';');
+    
+    const funFactsText = Array.isArray(animal.fun_facts)
+        ? animal.fun_facts.join('; ')
+        : Object.values(animal.fun_facts || {}).join('; ');
+    document.getElementById('edit_fun_facts').value = funFactsText;
+
 
     // Show modal
     const modal = new bootstrap.Modal(document.getElementById('editModal'));
@@ -98,14 +104,22 @@
         origin: document.getElementById('edit_origin').value,
         sleep_pattern: document.getElementById('edit_sleep_pattern').value,
         food_habits: document.getElementById('edit_food_habits').value,
-        fun_facts: document.getElementById('edit_fun_facts').value.split(';')
+        //fun_facts: document.getElementById('edit_fun_facts').value.split(';')
+        fun_facts: document.getElementById('edit_fun_facts').value.split(';').map(f => f.trim())
     };
 
-    await fetch(`/animals/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    });
+
+    const response = await fetch(`/animals/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+  });
+
+   // await fetch(`/animals/${id}`, {
+     //   method: 'PUT',
+       // headers: { 'Content-Type': 'application/json' },
+        //body: JSON.stringify(data)
+    //});
 
     // Close modal
     const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
