@@ -6,5 +6,6 @@ def animal_serializer(animal) -> dict:
         "origin": animal["origin"],
         "sleep_pattern": animal["sleep_pattern"],
         "food_habits": animal["food_habits"],
-        "fun_facts": animal["fun_facts"]
+        "fun_facts": animal["fun_facts"],
+        "score": animal.get("score", 0)
     }

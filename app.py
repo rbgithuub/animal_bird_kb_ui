@@ -5,6 +5,7 @@ from bson import ObjectId
 from bson.errors import InvalidId
 from flasgger import Swagger, swag_from
 
+
 app = Flask(__name__)
 CORS(app)
 
@@ -61,7 +62,8 @@ def get_animals():
                     'properties': {
                         '1': {'type': 'string'},
                         '2': {'type': 'string'}
-                    }
+                    },
+                    'score': {'type': 'integer'}
                 }
             },
             'required': ['name', 'category', 'origin', 'sleep_pattern', 'food_habits', 'fun_facts']
@@ -111,7 +113,8 @@ def add_animal():
                     'properties': {
                         '1': {'type': 'string'},
                         '2': {'type': 'string'}
-                    }
+                    },
+                    'score': {'type': 'integer'}
                 }
             }
         }
@@ -140,6 +143,7 @@ def update_animal(id):
     except Exception as e:
         print("Update error:", str(e))
         return jsonify({'error': 'Server error'}), 500
+    
 
 @app.route('/animals/<id>', methods=['DELETE'])
 @swag_from({

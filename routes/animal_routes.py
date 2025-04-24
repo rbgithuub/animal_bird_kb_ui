@@ -39,12 +39,12 @@ def get_animals():
     animals = list(collection.find())
     for animal in animals:
         animal['_id'] = str(animal['_id'])  # Convert ObjectId to string for JSON
-    return jsonify(animals)
+    return jsonify([animal_serializer(animal) for animal in animals])
 
 
 @animal_api.route("/animals/<id>", methods=["GET"])
 def get_animal(id):
-    animal = animals.find_one({"_id": ObjectId(id)})
+    animal = collection.find_one({"_id": ObjectId(id)})
     return jsonify(animal_serializer(animal))
 
 """@animal_api.route("/animals/<id>", methods=["PUT"])
@@ -67,7 +67,17 @@ def update_animal(id):
         "fun_facts": data['fun_facts']
     }
     if data:
-        result = collection.update_one({"_id": ObjectId(id)}, {"$set": updated_data})
+        result = collection.update_one(
+    {"_id": ObjectId(id)},
+    {"$set": {
+        "name": data["name"],
+        "category": data["category"],
+        "origin": data["origin"],
+        "sleep_pattern": data["sleep_pattern"],
+        "food_habits": data["food_habits"],
+        "fun_facts": data["fun_facts"]
+    }}
+)
         return jsonify({'message': 'Animal updated'}), 200
     else:
         return jsonify({"error":"No data provided"}), 400

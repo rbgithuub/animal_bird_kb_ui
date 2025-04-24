@@ -162,17 +162,18 @@ document.getElementById('editAnimalForm').addEventListener('submit', submitEdit)
 
     <h3>Animal List</h3>
     <table class="table table-bordered table-striped mt-3">
-        <thead class="table-dark">
-            <tr>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Origin</th>
-                <th>Sleep Pattern</th>
-                <th>Food Habits</th>
-                <th>Fun Facts</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
+      <thead class="table-dark">
+        <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Origin</th>
+            <th>Sleep Pattern</th>
+            <th>Food Habits</th>
+            <th>Fun Facts</th>
+            <th>Score out of 10</th> <!-- ✅ NEW COLUMN -->
+            <th>Actions</th>
+        </tr>
+    </thead>    
         <tbody id="animalTable"></tbody>
     </table>
     <script>
@@ -188,25 +189,25 @@ document.getElementById('editAnimalForm').addEventListener('submit', submitEdit)
           tableBody.innerHTML = '';
 
           animals.forEach(animal => {
-            // Convert fun_facts object to array of values
-            //  const factsArray = Object.values(animal.fun_facts);
-            const funFactsHTML = Array.isArray(animal.fun_facts)
-                ? animal.fun_facts.join('<br>')
-                : Object.values(animal.fun_facts || {}).join('<br>');
-              const row = `<tr>
-                  <td>${animal.name}</td>
-                  <td>${animal.category}</td>
-                  <td>${animal.origin}</td>
-                  <td>${animal.sleep_pattern}</td>
-                  <td>${animal.food_habits}</td>
-                  <td>${Object.values(animal.fun_facts).join('<br>')}</td>
-                  <td>
-                  <button class="btn btn-warning btn-sm" onclick="editAnimal('${animal._id}')">Edit</button>
-                  <button class="btn btn-danger btn-sm" onclick="deleteAnimal('${animal._id}')">Delete</button>
-                  </td>
-              </tr>`;
-              tableBody.innerHTML += row;
-          });
+    const funFactsHTML = Array.isArray(animal.fun_facts)
+        ? animal.fun_facts.join('<br>')
+        : Object.values(animal.fun_facts || {}).join('<br>');
+
+    const row = `<tr>
+        <td>${animal.name}</td>
+        <td>${animal.category}</td>
+        <td>${animal.origin}</td>
+        <td>${animal.sleep_pattern}</td>
+        <td>${animal.food_habits}</td>
+        <td>${funFactsHTML}</td>
+        <td>${Number.isFinite(animal.score) ? animal.score : 'N/A'}</td> <!-- ✅ SHOW SCORE -->
+        <td>
+            <button class="btn btn-warning btn-sm" onclick="editAnimal('${animal._id}')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteAnimal('${animal._id}')">Delete</button>
+        </td>
+    </tr>`;
+    tableBody.innerHTML += row;
+});
       }
 
       async function addAnimal(event) {
