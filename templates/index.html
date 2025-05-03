@@ -171,8 +171,8 @@ document.getElementById('editAnimalForm').addEventListener('submit', submitEdit)
             <th>Food Habits</th>
             <th>Fun Facts</th>
             <th>Score out of 10</th> <!-- ✅ NEW COLUMN -->
-            <th>Last Score Update</th> <!-- New -->
             <th>Actions</th>
+            <th>Score Updated Last on</th> <!-- New -->
         </tr>
     </thead>    
         <tbody id="animalTable"></tbody>
@@ -190,24 +190,30 @@ document.getElementById('editAnimalForm').addEventListener('submit', submitEdit)
           tableBody.innerHTML = '';
 
           animals.forEach(animal => {
-    const funFactsHTML = Array.isArray(animal.fun_facts)
-        ? animal.fun_facts.join('<br>')
-        : Object.values(animal.fun_facts || {}).join('<br>');
+      const funFactsHTML = Array.isArray(animal.fun_facts)
+          ? animal.fun_facts.join('<br>')
+          : Object.values(animal.fun_facts || {}).join('<br>');
 
-    const row = `<tr>
-        <td>${animal.name}</td>
-        <td>${animal.category}</td>
-        <td>${animal.origin}</td>
-        <td>${animal.sleep_pattern}</td>
-        <td>${animal.food_habits}</td>
-        <td>${funFactsHTML}</td>
-        <td>${Number.isFinite(animal.score) ? animal.score : 'N/A'}</td> <!-- ✅ SHOW SCORE -->
-        <td>
-            <button class="btn btn-warning btn-sm" onclick="editAnimal('${animal._id}')">Edit</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteAnimal('${animal._id}')">Delete</button>
-        </td>
-    </tr>`;
-    tableBody.innerHTML += row;
+      const lastUpdated = animal.score_last_updated
+          ? new Date(animal.score_last_updated).toLocaleString()
+          : 'N/A';
+
+
+      const row = `<tr>
+          <td>${animal.name}</td>
+          <td>${animal.category}</td>
+          <td>${animal.origin}</td>
+          <td>${animal.sleep_pattern}</td>
+          <td>${animal.food_habits}</td>
+          <td>${funFactsHTML}</td>
+          <td>${Number.isFinite(animal.score) ? animal.score : 'N/A'}</td> <!-- ✅ SHOW SCORE -->
+          <td>
+              <button class="btn btn-warning btn-sm" onclick="editAnimal('${animal._id}')">Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteAnimal('${animal._id}')">Delete</button>
+          </td>
+          <td>${animal.score_last_updated ? new Date(animal.score_last_updated).toLocaleString() : 'N/A'}</td>
+      </tr>`;
+      tableBody.innerHTML += row;
 });
       }
 
