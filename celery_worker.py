@@ -1,3 +1,4 @@
+import os
 from celery import Celery
 from celery.schedules import crontab
 from pymongo import MongoClient
@@ -5,13 +6,13 @@ from utils.score_calculator import score_animal_record
 from datetime import datetime, timezone
 
 # ✅ FIX 1: Set simple app name
-app = Celery('animal_kb_tasks', broker='redis://localhost:6379/0')
+app = Celery('animal_kb_tasks', broker=os.environ.get("CELERY_BROKER_URL", "redis://redis:6379/0"))
 
 # ✅ FIX 2: Define task name explicitly
 @app.task(name='animal_kb_tasks.update_scores')
 def update_scores():
     """Fetch each document and update the score field using NLP scoring."""
-    client = MongoClient("mongodb://localhost:27017/")
+    client = MongoClient("mongodb://mongo:27017/")
     db = client["animalDB"]
     collection = db["animals"]
 
@@ -29,7 +30,7 @@ def update_scores():
         print(f"[Mongo Update] Updated {animal.get('name')} => Score: {score}")
         def update_scores():
             """Fetch each document and update the score field using NLP scoring."""
-    client = MongoClient("mongodb://localhost:27017/")
+    client = MongoClient("mongodb://mongo:27017/")
     db = client["animalDB"]
     collection = db["animals"]
 

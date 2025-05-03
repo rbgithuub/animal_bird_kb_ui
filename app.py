@@ -9,7 +9,7 @@ from flasgger import Swagger, swag_from
 app = Flask(__name__)
 CORS(app)
 
-client = MongoClient("mongodb://localhost:27017/")
+client = MongoClient("mongodb://mongo:27017/")
 db = client["animalDB"]
 collection = db["animals"]
 
@@ -157,4 +157,4 @@ def delete_animal(id):
     return jsonify({'message': 'Animal deleted'})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
