@@ -2,6 +2,7 @@ from celery import Celery
 from celery.schedules import crontab
 from pymongo import MongoClient
 from utils.score_calculator import score_animal_record
+from datetime import datetime
 
 # ✅ FIX 1: Set simple app name
 app = Celery('animal_kb_tasks', broker='redis://localhost:6379/0')
@@ -17,11 +18,12 @@ def update_scores():
     animals = collection.find()
     for animal in animals:
         score = score_animal_record(animal)
+        now = datetime.utcnow()  # <-- Add UTC timestamp
         result = collection.update_one(
             {"_id": animal["_id"]},
-            {"$set": {"score": score}}
+            {"$set": {"score": score,  "score_last_updated": now}}
         )
-        """print("[✓] Animal scores updated.")"""
+        """print("[✓] Animal scores updated with timestamps.")"""
         print(f"[Mongo Update] Updated {animal.get('name')} => Score: {score}")
 
 # ✅ FIX 3: Beat schedule uses matching task name
