@@ -1,0 +1,26 @@
+# k8s/beat.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: beat
+  namespace: animalkb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: beat
+  template:
+    metadata:
+      labels:
+        app: beat
+    spec:
+      containers:
+      - name: beat
+        image: animalkb-beat:latest       # local image name
+        imagePullPolicy: Never            # do not pull from registry
+        envFrom:
+        - configMapRef:
+            name: animalkb-config
+        - secretRef:
+            name: animalkb-secret
+        command: ["celery", "-A", "app.celery", "beat", "--loglevel=info"]

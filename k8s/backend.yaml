@@ -1,0 +1,40 @@
+# k8s/backend.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: animalkb-backend
+  namespace: animalkb
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: animalkb-backend:latest   # local image name
+        imagePullPolicy: Never           # do not pull from registry
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: animalkb-config
+        - secretRef:
+            name: animalkb-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: animalkb
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 8000
+      targetPort: 8000
+  type: ClusterIP
