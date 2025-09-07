@@ -1,0 +1,53 @@
+@startuml
+package "animal_bird_kb_ui" {
+
+    class app {
+        +Flask app
+        +animal_serializer(animal: dict) : dict
+    }
+
+    package "routes" {
+        class animal_routes {
+            +get_animals()
+            +add_animal()
+            +update_animal(id)
+            +delete_animal(id)
+        }
+    }
+
+    package "models" {
+        class Animal {
+            -name: str
+            -category: str
+            -origin: str
+            -sleep_pattern: str
+            -food_habits: str
+            -fun_facts: dict
+            -score: int
+            -score_last_updated: datetime
+        }
+    }
+
+    package "utils" {
+        class score_calculator {
+            +calculate_score(animal: dict) : int
+        }
+    }
+
+    package "celery_worker" {
+        class celery_worker {
+            +celery app
+            +tasks()
+        }
+    }
+
+    ' Relationships
+    app --> animal_routes : uses
+    animal_routes --> Animal : uses
+    animal_routes --> score_calculator : uses
+    celery_worker --> Animal : uses
+    celery_worker --> score_calculator : uses
+
+}
+@enduml
+
