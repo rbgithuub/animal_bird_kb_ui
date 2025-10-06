@@ -1,14 +1,25 @@
-# k8s/configmap.yaml
+# ConfigMap for non-sensitive values
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: animalkb-config
-  namespace: animalkb
+  name: animal-kb-config
+  namespace: animal-kb
 data:
-  FLASK_ENV: "production"
-  TZ: "Asia/Kolkata"
-  # MongoDB connection URI
-  MONGO_URI: "mongodb://mongo:27017/animalkb"
-  # Redis connection details
+  MONGO_HOST: "mongodb"
+  MONGO_PORT: "27017"
+  MONGO_DB: "animal_kb"
   REDIS_HOST: "redis"
   REDIS_PORT: "6379"
+  FLASK_ENV: "production"
+
+---
+# App secrets (Flask secret key, JWT secret, etc.)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: animal-kb-secrets
+  namespace: animal-kb
+type: Opaque
+stringData:
+  FLASK_SECRET_KEY: supersecret_flask_key_here
+  JWT_SECRET: supersecret_jwt_key_here

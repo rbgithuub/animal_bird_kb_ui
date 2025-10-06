@@ -11,6 +11,11 @@ db = client["animalDB"]
 collection = db["animals"]
 
 
+@animal_api.route('/health')
+def health_check():
+    return jsonify(status="ok"), 200
+
+
 @animal_api.route('/')
 def home():
     return render_template('index.html')

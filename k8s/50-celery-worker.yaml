@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: animal-kb-celery-worker
+  namespace: animal-kb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: animal-kb-celery
+      component: worker
+  template:
+    metadata:
+      labels:
+        app: animal-kb-celery
+        component: worker
+    spec:
+      containers:
+      - name: celery-worker
+        image: rbdockerhuub/animal-kb-celery:latest
+        imagePullPolicy: IfNotPresent
+        # Replace this command with the exact worker invocation your project uses
+        command: ["celery", "-A", "celery_worker", "worker", "--loglevel=info", "--concurrency=2"]
+        envFrom:
+        - configMapRef:
+            name: animal-kb-config
+        - secretRef:
+            name: animal-kb-secrets
+        - secretRef:
+            name: mongodb-secret
+        - secretRef:
+            name: redis-secret
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flower
+  namespace: animal-kb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flower
+  template:
+    metadata:
+      labels:
+        app: flower
+    spec:
+      containers:
+      - name: flower
+        image: mher/flower:1.0.0
+        args:
+        - "--broker=redis://:$(REDIS_PASSWORD)@redis:6379/0"
+        envFrom:
+        - secretRef:
+            name: redis-secret
+        ports:
+        - containerPort: 5555
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flower
+  namespace: animal-kb
+spec:
+  selector:
+    app: flower
+  ports:
+  - port: 5555
+    targetPort: 5555
+  type: ClusterIP

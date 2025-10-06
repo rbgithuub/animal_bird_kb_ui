@@ -16,9 +16,15 @@ collection = db["animals"]
 # Initialize Swagger
 swagger = Swagger(app)
 
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({"status": "ok"}), 200
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
 
 @app.route('/animals', methods=['GET'])
 @swag_from({
@@ -157,4 +163,4 @@ def delete_animal(id):
     return jsonify({'message': 'Animal deleted'})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

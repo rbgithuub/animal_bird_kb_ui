@@ -47,6 +47,7 @@ services:
   # Celery Beat Scheduler
   beat:
     build: .
+    image: rbdockerhuub/animal-kb-beat:latest
     container_name: celery-beat
     depends_on:
       - redis
