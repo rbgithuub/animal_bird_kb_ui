@@ -1,5 +1,5 @@
 # worker/app/tasks.py
-from .celery import celery_app
+from .celery_app import celery_app
 
 @celery_app.task
 def add(x, y):

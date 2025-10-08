@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: celery-beat
-        image: rbdockerhuub/animal-kb-beat:latest
+        image: rbdockerhuub/animal-kb-beat:v3.9
         imagePullPolicy: IfNotPresent
         # Replace with your beat invocation if it differs.
         command: ["celery", "-A", "celery_worker", "beat", "--loglevel=info"]

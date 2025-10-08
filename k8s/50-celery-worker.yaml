@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: celery-worker
-        image: rbdockerhuub/animal-kb-celery:latest
+        image: rbdockerhuub/animal-kb-celery-worker:v4.7
         imagePullPolicy: IfNotPresent
         # Replace this command with the exact worker invocation your project uses
         command: ["celery", "-A", "celery_worker", "worker", "--loglevel=info", "--concurrency=2"]

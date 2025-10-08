@@ -2,7 +2,7 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 from pymongo import MongoClient
-from utils.score_calculator import score_animal_record
+from worker.utils.score_calculator import score_animal_record
 from datetime import datetime, timezone
 
 # ✅ FIX 1: Set simple app name

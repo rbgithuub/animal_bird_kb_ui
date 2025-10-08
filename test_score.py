@@ -1,4 +1,4 @@
-from utils.score_calculator import score_animal_record
+from worker.utils.score_calculator import score_animal_record
 
 # Example test data (you can tweak this)
 test_data = {
