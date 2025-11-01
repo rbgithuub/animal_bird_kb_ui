@@ -30,16 +30,12 @@ spec:
               value: "0.0.0.0"
             - name: FLOWER_PORT
               value: "5555"
-            - name: CELERY_BROKER_URL
-              value: "redis://:$(REDIS_PASSWORD)@redis:6379/0"
           command: ["celery"]
           args:
             - "-A"
             - "celery_worker"
             - "flower"
             - "--broker=redis://:${REDIS_PASSWORD}@redis:6379/0"
-            - "--port=5555"
-            - "--address=0.0.0.0"
           ports:
             - containerPort: 5555
 ---

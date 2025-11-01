@@ -17,7 +17,11 @@ spec:
     spec:
       containers:
         - name: celery-flower
-          image: rbdockerhuub/animal-kb-celery-flower:v10.0
+          image: rbdockerhuub/animal-kb-celery-flower:v7.0
+          args:
+            - "--broker=redis://:$(REDIS_PASSWORD)@redis:6379/0"
+            - "--port=5555"
+            - "--address=0.0.0.0"
           ports:
             - containerPort: 5555
           env:
@@ -26,22 +30,8 @@ spec:
                 secretKeyRef:
                   name: redis-secret
                   key: redis-password
-            - name: FLOWER_HOST
-              value: "0.0.0.0"
-            - name: FLOWER_PORT
-              value: "5555"
             - name: CELERY_BROKER_URL
               value: "redis://:$(REDIS_PASSWORD)@redis:6379/0"
-          command: ["celery"]
-          args:
-            - "-A"
-            - "celery_worker"
-            - "flower"
-            - "--broker=redis://:${REDIS_PASSWORD}@redis:6379/0"
-            - "--port=5555"
-            - "--address=0.0.0.0"
-          ports:
-            - containerPort: 5555
 ---
 apiVersion: v1
 kind: Service

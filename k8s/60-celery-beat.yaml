@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: celery-beat
-        image: rbdockerhuub/animal-kb-beat:v3.9
+        image: rbdockerhuub/animal-kb-celery-beat:v4.7
         imagePullPolicy: IfNotPresent
         # Replace with your beat invocation if it differs.
         command: ["celery", "-A", "celery_worker", "beat", "--loglevel=info"]
@@ -28,6 +28,16 @@ spec:
             name: animal-kb-secrets
         - secretRef:
             name: redis-secret
+        env:
+          # Pull Redis password securely from redis-secret
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: redis-secret
+                key: redis-password   # ensure this key exists in your redis-secret
+          # Construct the Celery broker URL dynamically
+          - name: CELERY_BROKER_URL
+            value: "redis://:$(REDIS_PASSWORD)@redis:6379/0"
         resources:
           requests:
             cpu: "50m"
