@@ -30,7 +30,7 @@ spec:
             name: redis-secret
         env:
           - name: MONGO_URI
-          
+            value: "mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@mongodb:27017"
 
         # Readiness / liveness probes (adjust path/port if needed)
         readinessProbe:
