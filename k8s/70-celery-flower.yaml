@@ -25,7 +25,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: redis-secret
-                  key: redis-password
+                  key: REDIS_PASSWORD
             - name: FLOWER_HOST
               value: "0.0.0.0"
             - name: FLOWER_PORT

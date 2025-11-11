@@ -38,7 +38,7 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: redis-secret
-                key: redis-password   # ensure this key exists in your redis-secret
+                key: REDIS_PASSWORD  # ensure this key exists in your redis-secret
           # Construct the Celery broker URL dynamically
           - name: CELERY_BROKER_URL
             value: "redis://:$(REDIS_PASSWORD)@redis:6379/0"
