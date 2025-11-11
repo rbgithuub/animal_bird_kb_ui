@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mongo-debug
+  namespace: animal-kb
+spec:
+  containers:
+  - name: helper
+    image: mongo:6.0
+    command: ["/bin/bash", "-c", "sleep infinity"]
+    volumeMounts:
+      - name: mongodb-data
+        mountPath: /data/db
+  volumes:
+    - name: mongodb-data
+      persistentVolumeClaim:
+        claimName: mongodb-pvc
+  restartPolicy: Never
