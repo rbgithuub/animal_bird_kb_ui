@@ -12,7 +12,12 @@ app = Celery('animal_kb_tasks', broker=os.environ.get("CELERY_BROKER_URL", "redi
 @app.task(name='animal_kb_tasks.update_scores')
 def update_scores():
     """Fetch each document and update the score field using NLP scoring."""
-    client = MongoClient("mongodb://mongo:27017/")
+
+    MONGO_URI = os.getenv(
+    "MONGO_URI",
+    "mongodb://admin:admin123@mongodb:27017/animalDB?authSource=admin"
+)
+    client = MongoClient(MONGO_URI)
     db = client["animalDB"]
     collection = db["animals"]
 
@@ -30,7 +35,7 @@ def update_scores():
         print(f"[Mongo Update] Updated {animal.get('name')} => Score: {score}")
         def update_scores():
             """Fetch each document and update the score field using NLP scoring."""
-    client = MongoClient("mongodb://mongo:27017/")
+    client = MongoClient(MONGO_URI)
     db = client["animalDB"]
     collection = db["animals"]
 

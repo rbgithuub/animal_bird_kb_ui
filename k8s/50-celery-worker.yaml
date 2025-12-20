@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: celery-worker
-        image: rbdockerhuub/animal-kb-celery-worker:v4.7
+        image: rbdockerhuub/animal-kb-celery-worker:v4.9
         imagePullPolicy: IfNotPresent
         command: ["celery", "-A", "celery_worker", "worker", "--loglevel=info", "--concurrency=2"]
         envFrom:
