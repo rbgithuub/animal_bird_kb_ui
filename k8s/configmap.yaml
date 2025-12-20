@@ -7,7 +7,7 @@ metadata:
 data:
   MONGO_HOST: "mongodb"
   MONGO_PORT: "27017"
-  MONGO_DB: "animal_kb"
+  MONGO_DB: "animalkb"
   REDIS_HOST: "redis"
   REDIS_PORT: "6379"
   FLASK_ENV: "production"

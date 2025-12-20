@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: rbdockerhuub/animal-kb-api:v4.7
+        image: rbdockerhuub/animal-kb-api:v4.8
         ports:
         - containerPort: 5000  # change if your container listens on a different port
         envFrom:
@@ -29,8 +29,18 @@ spec:
         - secretRef:
             name: redis-secret
         env:
-          - name: MONGO_URI
-            value: "mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@mongodb:27017"
+        - name: MONGO_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: MONGO_INITDB_ROOT_USERNAME
+        - name: MONGO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: MONGO_INITDB_ROOT_PASSWORD
+        - name: MONGO_URI
+          value: "mongodb://$(MONGO_INITDB_ROOT_USERNAME):$(MONGO_INITDB_ROOT_PASSWORD)@mongodb:27017/animalDB?authSource=admin"
 
         # Readiness / liveness probes (adjust path/port if needed)
         readinessProbe:
