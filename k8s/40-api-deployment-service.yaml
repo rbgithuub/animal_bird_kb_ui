@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: rbdockerhuub/animal-kb-api:v4.8
+        image: rbdockerhuub/animal-kb-api:v4.9
         ports:
         - containerPort: 5000  # change if your container listens on a different port
         envFrom:

@@ -39,6 +39,8 @@ spec:
               secretKeyRef:
                 name: redis-secret
                 key: REDIS_PASSWORD  # ensure this key exists in your redis-secret
+          - name: MONGO_URI
+            value: "mongodb://$(MONGO_INITDB_ROOT_USERNAME):$(MONGO_INITDB_ROOT_PASSWORD)@mongodb:27017/animalDB?authSource=admin"
           # Construct the Celery broker URL dynamically
           - name: CELERY_BROKER_URL
             value: "redis://:$(REDIS_PASSWORD)@redis:6379/0"
