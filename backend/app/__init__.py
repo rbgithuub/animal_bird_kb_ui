@@ -6,6 +6,9 @@ def create_app():
     # register NLP routes
     from app.nlp.nlp_routes import nlp_bp
     app.register_blueprint(nlp_bp)
+    from app.routes.chat_ui import ui_bp
+    app.register_blueprint(ui_bp)
+    
 
     return app
 # app/__init__.py

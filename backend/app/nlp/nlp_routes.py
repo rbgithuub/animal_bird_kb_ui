@@ -10,3 +10,15 @@ def nlp_command():
     entities = extract_entities(text)
     result = route_command(text, entities)
     return jsonify({"response": result})
+
+@nlp_bp.route("/chat", methods=["POST"])
+def chatbot():
+    text = request.json.get("message")
+
+    entities = extract_entities(text)
+    intent = detect_intent(text)
+
+    return {
+        "intent": intent,
+        "structured_data": entities
+    }
