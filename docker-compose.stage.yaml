@@ -1,0 +1,23 @@
+services:
+  api:
+    ports:
+      - "5002:5000"
+    env_file:
+      - .env.stage
+    command: flask run --reload
+
+  worker:
+    env_file:
+      - .env.stage
+
+  beat:
+    env_file:
+      - .env.stage
+
+  mongo:
+    ports:
+      - "27018:27017"
+
+  redis:
+    ports:
+      - "6380:6379"

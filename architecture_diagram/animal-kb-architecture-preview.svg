@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1100" viewBox="0 0 1800 1100" role="img" aria-label="Animal Knowledge Base architecture on AKS">
+  <defs>
+    <style>
+      .title { font: 700 34px 'Helvetica Neue', Arial, sans-serif; fill: #1f2937; }
+      .h1 { font: 700 24px 'Helvetica Neue', Arial, sans-serif; fill: #111827; }
+      .h2 { font: 650 20px 'Helvetica Neue', Arial, sans-serif; fill: #111827; }
+      .txt { font: 600 18px 'Helvetica Neue', Arial, sans-serif; fill: #1f2937; }
+      .box { rx: 16; ry: 16; stroke-width: 2.5; }
+      .iconCard { rx: 18; ry: 18; stroke-width: 2.5; }
+    </style>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L14,7 L0,14 z" fill="#374151" />
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1800" height="1100" fill="#f8fafc"/>
+  <text x="70" y="80" class="title">Animal Knowledge Base App on Azure AKS</text>
+
+  <rect x="70" y="300" width="260" height="120" class="box" fill="#dae8fc" stroke="#6c8ebf"/>
+  <text x="200" y="372" text-anchor="middle" class="h2">Users / Clients</text>
+
+  <rect x="390" y="270" width="240" height="190" class="iconCard" fill="#ffffff" stroke="#0078d4"/>
+  <rect x="468" y="308" width="84" height="50" rx="6" fill="#0078d4"/>
+  <path d="M468 333 H438 M552 333 H582" stroke="#0078d4" stroke-width="8" stroke-linecap="round"/>
+  <path d="M438 333 L420 320 M438 333 L420 346 M582 333 L600 320 M582 333 L600 346" stroke="#0078d4" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <text x="510" y="405" text-anchor="middle" class="h2">Azure Load Balancer</text>
+
+  <rect x="700" y="130" width="1040" height="820" class="box" fill="#f5f5f5" stroke="#666666"/>
+  <text x="730" y="180" class="h1">AKS Cluster: Animal Knowledge Base App</text>
+
+  <rect x="760" y="230" width="280" height="220" class="iconCard" fill="#ffffff" stroke="#0078d4"/>
+  <polygon points="900,275 960,310 960,380 900,415 840,380 840,310" fill="#0078d4"/>
+  <circle cx="900" cy="345" r="24" fill="#ffffff"/>
+  <path d="M900 330 L912 336 L912 354 L900 360 L888 354 L888 336 Z" fill="#0078d4"/>
+  <text x="900" y="430" text-anchor="middle" class="h2">Azure Kubernetes</text>
+  <text x="900" y="455" text-anchor="middle" class="h2">Service (AKS)</text>
+
+  <rect x="1100" y="250" width="320" height="120" class="box" fill="#d5e8d4" stroke="#82b366"/>
+  <text x="1260" y="322" text-anchor="middle" class="h2">Flask API Pods</text>
+
+  <rect x="1100" y="470" width="360" height="140" class="box" fill="#f8cecc" stroke="#b85450"/>
+  <text x="1280" y="535" text-anchor="middle" class="h2">Redis</text>
+  <text x="1280" y="565" text-anchor="middle" class="txt">Cache + Celery Broker</text>
+
+  <rect x="1500" y="470" width="200" height="140" class="box" fill="#e1d5e7" stroke="#9673a6"/>
+  <text x="1600" y="550" text-anchor="middle" class="h2">Celery Workers</text>
+
+  <rect x="1220" y="700" width="360" height="150" class="box" fill="#ffe6cc" stroke="#d79b00"/>
+  <text x="1400" y="770" text-anchor="middle" class="h2">MongoDB</text>
+  <text x="1400" y="800" text-anchor="middle" class="txt">Animal and Bird Knowledge Data</text>
+
+  <line x1="330" y1="360" x2="390" y2="360" stroke="#374151" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="360" y="344" text-anchor="middle" class="txt">Public HTTPS</text>
+
+  <line x1="630" y1="360" x2="760" y2="340" stroke="#374151" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="695" y="332" text-anchor="middle" class="txt">Send traffic into AKS</text>
+
+  <line x1="1040" y1="340" x2="1100" y2="310" stroke="#374151" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="1070" y="300" text-anchor="middle" class="txt">Route API requests</text>
+
+  <line x1="1260" y1="370" x2="1260" y2="470" stroke="#374151" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="1212" y="430" class="txt">Queue async jobs</text>
+
+  <line x1="1460" y1="540" x2="1500" y2="540" stroke="#374151" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="1480" y="522" text-anchor="middle" class="txt">Consume tasks</text>
+
+  <line x1="1260" y1="370" x2="1370" y2="700" stroke="#374151" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="1320" y="560" class="txt">Read / write docs</text>
+
+  <line x1="1600" y1="610" x2="1500" y2="700" stroke="#374151" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="1568" y="670" class="txt">Write results</text>
+
+  <line x1="1500" y1="510" x2="1460" y2="510" stroke="#374151" stroke-width="2.5" stroke-dasharray="10 8" marker-end="url(#arrow)"/>
+  <text x="1480" y="492" text-anchor="middle" class="txt">Status lookups</text>
+</svg>

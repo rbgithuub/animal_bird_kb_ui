@@ -1,0 +1,29 @@
+services:
+  api:
+    env_file:
+      - .env.dev
+    ports:
+      - "5001:5000"
+    command: flask run --reload
+
+  worker:
+    env_file:
+      - .env.dev
+
+  beat:
+    env_file:
+      - .env.dev
+
+  mongo:
+    ports:
+      - "27017:27017"
+    env_file:
+      - .env.dev
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    
+
+  redis:
+    ports:
+      - "6379:6379"

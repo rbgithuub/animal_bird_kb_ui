@@ -1,14 +1,11 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template, current_app
 from flask import render_template
-from config import MONGO_URI
 from pymongo import MongoClient
 from bson import ObjectId
+from bson.errors import InvalidId
 from models.animals import animal_serializer
 
 animal_api = Blueprint('animal_api', __name__)
-client = MongoClient(MONGO_URI)
-db = client["animalDB"]
-collection = db["animals"]
 
 
 @animal_api.route('/')
@@ -18,11 +15,16 @@ def home():
 @animal_api.route("/animals", methods=["POST"])
 def add_animals_bulk():
     try:
+        db = current_app.config["MONGO_DB"]
+        collection = db["animals"]
+
         data = request.get_json()
-        
-        # Ensure data is a list of dictionaries
+
+        if isinstance(data, dict):
+            data = [data]
+
         if not isinstance(data, list):
-            return jsonify({"error": "Expected a list of animal objects"}), 400
+            return jsonify({"error": "Invalid input format"}), 400
 
         result = collection.insert_many(data)
         inserted_ids = [str(_id) for _id in result.inserted_ids]
@@ -31,59 +33,100 @@ def add_animals_bulk():
             "message": "Animals inserted successfully",
             "inserted_ids": inserted_ids
         }), 201
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 @animal_api.route("/animals", methods=["GET"])
 def get_animals():
+    db = current_app.config["MONGO_DB"]
+    collection = db["animals"]
+
     animals = list(collection.find())
     for animal in animals:
-        animal['_id'] = str(animal['_id'])  # Convert ObjectId to string for JSON
+        animal['_id'] = str(animal['_id'])
+
     return jsonify([animal_serializer(animal) for animal in animals])
 
 
 @animal_api.route("/animals/<id>", methods=["GET"])
 def get_animal(id):
-    animal = collection.find_one({"_id": ObjectId(id)})
-    return jsonify(animal_serializer(animal))
+    try:
+        db = current_app.config["MONGO_DB"]
+        collection = db["animals"]
 
-"""@animal_api.route("/animals/<id>", methods=["PUT"])
-def update_animal(id):
-    data = request.json
-    animals.update_one({"_id": ObjectId(id)}, {"$set": data})
-    return jsonify({"msg": "Updated"})"""
+        # Validate ObjectId
+        try:
+            obj_id = ObjectId(id)
+        except InvalidId:
+            return jsonify({"error": "Invalid animal ID"}), 400
+
+        animal = collection.find_one({"_id": obj_id})
+
+        if not animal:
+            return jsonify({"error": "Animal not found"}), 404
+
+        animal["_id"] = str(animal["_id"])
+
+        return jsonify(animal_serializer(animal)), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @animal_api.route('/animals/<id>', methods=['PUT'])
 def update_animal(id):
-    print("Received PUT request for ID:", id)
-    print("Request JSON:", request.json)
-    data = request.json
-    updated_data = {
-        "name": data['name'],
-        "category": data['category'],
-        "origin": data['origin'],
-        "sleep_pattern": data['sleep_pattern'],
-        "food_habits": data['food_habits'],
-        "fun_facts": data['fun_facts']
-    }
-    if data:
-        result = collection.update_one(
-    {"_id": ObjectId(id)},
-    {"$set": {
-        "name": data["name"],
-        "category": data["category"],
-        "origin": data["origin"],
-        "sleep_pattern": data["sleep_pattern"],
-        "food_habits": data["food_habits"],
-        "fun_facts": data["fun_facts"]
-    }}
-)
-        return jsonify({'message': 'Animal updated'}), 200
-    else:
-        return jsonify({"error":"No data provided"}), 400
+    try:
+        db = current_app.config["MONGO_DB"]
+        collection = db["animals"]
 
+        # Validate ObjectId
+        try:
+            obj_id = ObjectId(id)
+        except InvalidId:
+            return jsonify({"error": "Invalid animal ID"}), 400
+
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+
+        # Only update allowed fields
+        allowed_fields = [
+            "name",
+            "category",
+            "origin",
+            "sleep_pattern",
+            "food_habits",
+            "fun_facts"
+        ]
+
+        update_data = {
+            field: data[field]
+            for field in allowed_fields
+            if field in data
+        }
+
+        if not update_data:
+            return jsonify({"error": "No valid fields to update"}), 400
+
+        result = collection.update_one(
+            {"_id": obj_id},
+            {"$set": update_data}
+        )
+
+        if result.matched_count == 0:
+            return jsonify({"error": "Animal not found"}), 404
+
+        return jsonify({"message": "Animal updated successfully"}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @animal_api.route("/animals/<id>", methods=["DELETE"])
 def delete_animal(id):
-    animals.delete_one({"_id": ObjectId(id)})
+    db = current_app.config["MONGO_DB"]
+    collection = db["animals"]
+
+    collection.delete_one({"_id": ObjectId(id)})
     return jsonify({"msg": "Deleted"})
