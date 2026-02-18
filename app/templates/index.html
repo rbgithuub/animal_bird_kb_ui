@@ -79,8 +79,8 @@
           async function editAnimal(id) {
           const response = await fetch(`/animals`);
           const animals = await response.json();
-          const animal = animals.find(a => a._id === id); // Make sure 'animals' is globally accessible
-          //const animal = animals.find(a => a._id === id);
+          const animal = animals.find(a => a.id === id); // Make sure 'animals' is globally accessible
+          //const animal = animals.find(a => a.id === id);
 
           if (!animal) {
              alert("Animal not found for editing.");
@@ -88,7 +88,7 @@
           }
 
   // Fill modal with existing data
-  document.getElementById('edit_id').value = animal._id;
+  document.getElementById('edit_id').value = animal.id;
   document.getElementById('edit_name').value = animal.name;
   document.getElementById('edit_category').value = animal.category;
   document.getElementById('edit_origin').value = animal.origin;
@@ -208,8 +208,8 @@ document.getElementById('editAnimalForm').addEventListener('submit', submitEdit)
           <td>${funFactsHTML}</td>
           <td>${Number.isFinite(animal.score) ? animal.score : 'N/A'}</td> <!-- ✅ SHOW SCORE -->
           <td>
-              <button class="btn btn-warning btn-sm" onclick="editAnimal('${animal._id}')">Edit</button>
-              <button class="btn btn-danger btn-sm" onclick="deleteAnimal('${animal._id}')">Delete</button>
+              <button class="btn btn-warning btn-sm" onclick="editAnimal('${animal.id}')">Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteAnimal('${animal.id}')">Delete</button>
           </td>
           <td>${animal.score_last_updated ? new Date(animal.score_last_updated).toLocaleString() : 'N/A'}</td>
       </tr>`;
