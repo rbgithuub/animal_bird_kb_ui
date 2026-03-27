@@ -1,11 +1,6 @@
-#!/Users/balajiraja/project_python/animal_bird_kb_ui/venv/bin/python3
-
-# -*- coding: utf-8 -*-
-import re
+#!/Users/balajiraja/holy999d/holy999d/animal_bird_kb_ui/venv/bin/python3.11
 import sys
-
 from pip._internal.cli.main import main
-
 if __name__ == '__main__':
-    sys.argv[0] = re.sub(r'(-script\.pyw?|\.exe)?$', '', sys.argv[0])
+    sys.argv[0] = sys.argv[0].removesuffix('.exe')
     sys.exit(main())
