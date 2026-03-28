@@ -1,75 +1,60 @@
 import os
-import subprocess
 from openai import OpenAI
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-PROJECT_PATH = "/Users/balajiraja/holy999d/holy999d/animal_bird_kb_ui"
+def read_compose():
+    with open("../docker-compose.yml", "r") as f:
+        return f.read()
 
-def run_command(cmd):
-    print(f"\n🔧 Running: {cmd}\n")
+def generate_azure_yaml(compose_content):
+    prompt = f"""
+You are a DevOps AI agent.
 
-    result = subprocess.run(
-        cmd,
-        shell=True,
-        cwd=PROJECT_PATH,   # 👈 THIS FIXES EVERYTHING
-        capture_output=True,
-        text=True
-    )
+Convert this docker-compose YAML into Azure Container Instance YAML (deploy.yaml).
 
-    print("STDOUT:", result.stdout)
-    print("STDERR:", result.stderr)
+Rules:
+- Include all services
+- Map ports correctly
+- Add CPU and memory
+- Use Linux osType
+- Add imageRegistryCredentials placeholder
+- Use proper indentation
+- Output ONLY valid YAML (no explanation)
 
-    return result.returncode
+docker-compose.yml:
+{compose_content}
+"""
 
-def ask_agent(task):
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "You are a DevOps AI agent. Only return shell commands."},
-            {"role": "user", "content": task}
+            {"role": "system", "content": "You are an expert DevOps engineer."},
+            {"role": "user", "content": prompt}
         ]
     )
 
     return response.choices[0].message.content
 
-def clean_commands(plan):
-    cleaned = []
 
-    for line in plan.split("\n"):
-        line = line.strip()
+def save_yaml(yaml_content):
+    with open("../deploy.yaml", "w") as f:
+        f.write(yaml_content)
 
-        if (
-            not line
-            or line.startswith("```")
-            or line.startswith("#")
-        ):
-            continue
+def clean_yaml(content):
+    return content.replace("```yaml", "").replace("```", "").strip()
 
-        cleaned.append(line)
-
-    return cleaned
-
-
-def execute_plan(plan):
-    commands = clean_commands(plan)
-
-    for cmd in commands:
-        run_command(cmd)
 
 if __name__ == "__main__":
-    task = """
-    Generate ONLY shell commands to:
-    1. Build docker image named animal-kb
-    2. Tag it for Azure Container Registry: animalkbacr.azurecr.io
-    3. Push the image
-    """
+    compose = read_compose()
 
-    plan = ask_agent(task)
+    print("\n📄 docker-compose.yml:\n", compose)
 
-    print("\n🤖 AI Generated Commands:\n", plan)
+    azure_yaml = generate_azure_yaml(compose)
+    azure_yaml = clean_yaml(azure_yaml)
 
-    confirm = input("\nDo you want to execute these commands? (yes/no): ")
+    print("\n🤖 Generated deploy.yaml:\n", azure_yaml)
 
-    if confirm.lower() == "yes":
-        execute_plan(plan)
+    save_yaml(azure_yaml)
+
+    print("\n✅ deploy.yaml created successfully!")

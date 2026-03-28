@@ -1,54 +1,109 @@
-apiVersion: 2021-10-01
+apiVersion: '2021-10-01'
 location: eastus
 name: animal-kb-group
 properties:
+  osType: Linux
   containers:
-  
-  - name: redis
-    properties:
-      image: redis:7
-      ports:
-        - port: 6379
-      resources:
-        requests:
-          cpu: 0.5
-          memoryInGb: 1
-
+    - name: mongo
+      properties:
+        image: animalkbacr.azurecr.io/mongo:6
+        ports:
+          - port: 27017
+        resources:
+          requests:
+            cpu: 1
+            memoryInGB: 1.5
+        volumeMounts:
+          - name: mongo-data
+            mountPath: /data/db
+    - name: redis
+      properties:
+        image: animalkbacr.azurecr.io/redis:7
+        ports:
+          - port: 6379
+        resources:
+          requests:
+            cpu: 1
+            memoryInGB: 1
     - name: api
       properties:
         image: animalkbacr.azurecr.io/animal-api:latest
         ports:
-          - port: 80
+          - port: 5001
+        environmentVariables:
+          - name: FLASK_APP
+            value: app.py
+          - name: FLASK_ENV
+            value: development
+          - name: MONGO_URI
+            value: mongodb://mongo:27017/
         resources:
           requests:
             cpu: 1
-            memoryInGb: 1.5
-
+            memoryInGB: 1.5
+        command:
+          - flask
+          - run
+          - --host=0.0.0.0
+          - --port=5001
     - name: worker
       properties:
-        image: animalkbacr.azurecr.io/animal-worker:latest
+        image: animalkbacr.azurecr.io/animal-api:latest
+        environmentVariables:
+          - name: MONGO_URI
+            value: mongodb://mongo:27017/
         resources:
           requests:
-            cpu: 0.5
-            memoryInGb: 1
-
+            cpu: 1
+            memoryInGB: 1
+        command:
+          - celery
+          - -A
+          - celery_worker
+          - worker
+          - --loglevel=info
     - name: beat
       properties:
-        image: animalkbacr.azurecr.io/animal-beat:latest
+        image: animalkbacr.azurecr.io/animal-api:latest
+        environmentVariables:
+          - name: MONGO_URI
+            value: mongodb://mongo:27017/
+          - name: CELERY_BROKER_URL
+            value: redis://redis:6379/0
         resources:
           requests:
-            cpu: 0.5
-            memoryInGb: 1
-
-  osType: Linux
-
-  ipAddress:
-    type: Public
-    ports:
-      - protocol: tcp
-        port: 80
-
+            cpu: 1
+            memoryInGB: 1
+        command:
+          - celery
+          - -A
+          - celery_worker
+          - beat
+          - --loglevel=info
+    - name: flower
+      properties:
+        image: animalkbacr.azurecr.io/flower:latest
+        ports:
+          - port: 5555
+        environmentVariables:
+          - name: CELERY_BROKER_URL
+            value: redis://redis:6379/0
+        resources:
+          requests:
+            cpu: 1
+            memoryInGB: 1
   imageRegistryCredentials:
     - server: animalkbacr.azurecr.io
       username: animalkbacr
       password: AbaAs8cuwApfC02XaLwpvxRRmBLlBWk4WbUvu3YkhcRA2Pa38ZjAJQQJ99CCACYeBjFEqg7NAAACAZCRAlPz
+  ipAddress:
+    type: Public
+    ports:
+      - protocol: tcp
+        port: 5001
+      - protocol: tcp
+        port: 5555
+  volumes:
+    - name: mongo-data
+      emptyDir: {}
+type: Microsoft.ContainerInstance/containerGroups
