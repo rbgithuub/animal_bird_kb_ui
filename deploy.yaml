@@ -1,0 +1,54 @@
+apiVersion: 2021-10-01
+location: eastus
+name: animal-kb-group
+properties:
+  containers:
+  
+  - name: redis
+    properties:
+      image: redis:7
+      ports:
+        - port: 6379
+      resources:
+        requests:
+          cpu: 0.5
+          memoryInGb: 1
+
+    - name: api
+      properties:
+        image: animalkbacr.azurecr.io/animal-api:latest
+        ports:
+          - port: 80
+        resources:
+          requests:
+            cpu: 1
+            memoryInGb: 1.5
+
+    - name: worker
+      properties:
+        image: animalkbacr.azurecr.io/animal-worker:latest
+        resources:
+          requests:
+            cpu: 0.5
+            memoryInGb: 1
+
+    - name: beat
+      properties:
+        image: animalkbacr.azurecr.io/animal-beat:latest
+        resources:
+          requests:
+            cpu: 0.5
+            memoryInGb: 1
+
+  osType: Linux
+
+  ipAddress:
+    type: Public
+    ports:
+      - protocol: tcp
+        port: 80
+
+  imageRegistryCredentials:
+    - server: animalkbacr.azurecr.io
+      username: animalkbacr
+      password: AbaAs8cuwApfC02XaLwpvxRRmBLlBWk4WbUvu3YkhcRA2Pa38ZjAJQQJ99CCACYeBjFEqg7NAAACAZCRAlPz
