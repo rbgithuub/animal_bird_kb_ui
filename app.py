@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -9,8 +10,12 @@ from flasgger import Swagger, swag_from
 app = Flask(__name__)
 CORS(app)
 
-client = MongoClient("mongodb://mongo:27017/")
-db = client["animalDB"]
+MONGO_URI = os.environ["MONGO_URI"]
+MONGO_DB = os.getenv("MONGO_DB", "animalkb")
+
+
+client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)  # 5 seconds timeout
+db = client[MONGO_DB]
 collection = db["animals"]
 
 # Initialize Swagger

@@ -1,3 +1,5 @@
+
+import os
 from flask import Blueprint, request, jsonify
 from flask import render_template
 from config import MONGO_URI
@@ -5,10 +7,16 @@ from pymongo import MongoClient
 from bson import ObjectId
 from models.animals import animal_serializer
 
-animal_api = Blueprint('animal_api', __name__)
-client = MongoClient(MONGO_URI)
-db = client["animalDB"]
+
+MONGO_URI = os.environ["MONGO_URI"]
+MONGO_DB = os.getenv("MONGO_DB", "animalkb")
+
+
+client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)  # 5 seconds timeout
+db = client[MONGO_DB]
 collection = db["animals"]
+
+animal_api = Blueprint('animal_api', __name__)
 
 
 @animal_api.route('/')
